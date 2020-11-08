@@ -33,7 +33,7 @@ class ImageModel:
             with open(signature_path, 'r') as f:
                 signature = json.load(f)
             inputs = signature.get('inputs')
-            return inputs['Image']['shape'][1:]
+            return inputs['Image']['shape'][1:3]
         else:
             print('signatureファイルが見つかりません。')
 
