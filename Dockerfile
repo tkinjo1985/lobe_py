@@ -19,8 +19,9 @@ RUN wget https://repo.anaconda.com/archive/Anaconda3-2020.07-Linux-x86_64.sh && 
 # anaconda3へのPATHを追加
 ENV PATH=/opt/anaconda3/bin:$PATH
 
-# pipのインストール
-RUN pip install --upgrade pip
-
 # workdirを/へ変更
 WORKDIR /work
+
+# pipのインストール
+COPY requirements.txt /work
+RUN pip install -r requirements.txt
