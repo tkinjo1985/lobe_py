@@ -1,14 +1,12 @@
 # ベースイメージ名:タグ名
-FROM ubuntu:latest
+FROM python:3.8
 
 # パッケージアップデートと必要パッケージのインストール
 RUN apt-get update && apt-get install -y \
     sudo \
     wget \
     vim \
-    git \
-    python3-dev \
-    python3-pip
+    git
 
 # workdirを/optへ変更
 WORKDIR /opt
@@ -23,7 +21,6 @@ ENV PATH=/opt/anaconda3/bin:$PATH
 
 # pipのインストール
 RUN pip install --upgrade pip
-RUN pip install tensorflow-cpu
 
 # workdirを/へ変更
 WORKDIR /work
