@@ -10,4 +10,4 @@ services:
       - .:/work
     tty: true
     stdin_open: true
-    command: jupyter-lab --ip=0.0.0.0 --allow-root --no-browser --LabApp.token=''
+    command: "jupyter notebook --notebook-dir=/work --ip 0.0.0.0 --no-browser --allow-root"

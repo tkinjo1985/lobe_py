@@ -1,27 +1,12 @@
-# ベースイメージ名:タグ名
-FROM python:3.8
+FROM tensorflow/tensorflow:latest-jupyter
 
-# パッケージアップデートと必要パッケージのインストール
 RUN apt-get update && apt-get install -y \
     sudo \
-    wget \
-    vim \
     git
 
-# workdirを/optへ変更
-WORKDIR /opt
-
-# anacondaのインストールスクリプトのダウンロードとスクリプト実行
-RUN wget https://repo.anaconda.com/archive/Anaconda3-2020.07-Linux-x86_64.sh && \
-    sh Anaconda3-2020.07-Linux-x86_64.sh -b -p /opt/anaconda3 && \
-    rm -rf Anaconda3-2020.07-Linux-x86_64.sh
-
-# anaconda3へのPATHを追加
-ENV PATH=/opt/anaconda3/bin:$PATH
-
-# workdirを/へ変更
 WORKDIR /work
 
-# pipのインストール
-COPY requirements.txt /work
-RUN pip install -r requirements.txt
+# pipを最新のアップデート
+RUN pip install --upgrade pip
+
+CMD [ "bash -c source /etc/bash.bashrc" ]
