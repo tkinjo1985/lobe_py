@@ -27,17 +27,14 @@ from image_utils import preprocess_from_file, preprocess_from_url
 # 1, modelのインスタンス生成。引数はmodelの保存パス。
 model = ImageModel('sample_model')
 
-# 2, modelの入力サイズを取得。引数はsignatureファイル。 
-input_shape = model.get_input_shape('sample_model/signature.json')
-
-# 3, 予測したい画像をmodelへの入力データに変換する。
+# 2, 予測したい画像をmodelへの入力データに変換する。
 # 画像ファイルを使用する場合
 image = preprocess_from_file('sample_image/cat/cat.105.jpg')
 
 # URLを使用する場合
 image = preprocess_from_url('画像URL')
 
-# 4, 予測する。
+# 3, 予測する。
 predict_label = model.predict(image)
 print(predict_label)
 ```
