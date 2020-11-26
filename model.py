@@ -12,7 +12,7 @@ class ImageModel:
         try:
             self.model = tf.saved_model.load(model_path)
             self.infer = self.model.signatures['serving_default']
-        except OSError as err:
+        except Exception as err:
             print('modelが見つかりません。modelの保存先と名前を確認してください。')
             print(err)
 
@@ -26,5 +26,8 @@ class ImageModel:
         Return:
         predict: 予測結果
         """
-        predict = self.infer(tf.constant(image))['Prediction'][0]
-        return predict.numpy().decode()
+        try:
+            predict = self.infer(tf.constant(image))['Prediction'][0]
+            return predict.numpy().decode()
+        except ValueError as e:
+            print(e)

@@ -11,16 +11,20 @@ def preprocess_from_file(image_path):
     予測に使用する画像をnumpy.ndarrayに変換する。
 
     parameter:
-    image_path: 画像ファイル
+        image_path str: 変換する画像ファイル
 
     return:
-    image: numpy.ndarray
+        numpy.ndarray: モデルへの入力形式に変換された画像データ
     """
     if os.path.exists(image_path):
-        image = image2numpy(image_path)
-        return image
+        file_extension = os.path.splitext(os.path.basename(image_path))[-1]
+        if file_extension == '.jpg' or file_extension == '.jpeg' or file_extension == '.png':
+            image = _image2numpy(image_path)
+            return image
+        else:
+            print('画像ではありません。')
     else:
-        print('画像が見つかりません。')
+        print('ファイルが見つかりません。')
 
 
 def preprocess_from_url(image_url):
@@ -28,25 +32,31 @@ def preprocess_from_url(image_url):
     予測にWBE上の画像を使う場合は、この関数を使い画像をnumpy.ndarrayに変換する。
 
     parameter:
-    image_url: 画像のURL
+        image_url str: 画像のURL
 
     return:
-    image: numpy.ndarray
+        numpy.ndarray: モデルへの入力形式に変換された画像データ
     """
     res = requests.get(image_url)
-    if res.status_code == 200 and res.headers['Content-Type'] == 'image/jpeg':
-        image_bytes = BytesIO(res.content)
-        image = image2numpy(image_bytes)
-        return image
+    content_type = res.headers['Content-Type']
+    if res.status_code == 200 and 'jpeg' in content_type or 'png' in content_type:
+        try:
+            image_bytes = BytesIO(res.content)
+        except Exception as err:
+            print(err)
+        else:
+            image = _image2numpy(image_bytes)
+            return image
     else:
         print('画像が見つかりません。URLを確認してください。')
 
 
-def image2numpy(image):
-    """
-    画像をnumpy形式に変換する。
-    """
-    image = Image.open(image)
-    image = np.asarray(image, dtype=np.float32) / 255.0
-    image = np.expand_dims(image, axis=0)
-    return image
+def _image2numpy(image_file):
+    try:
+        image = Image.open(image_file).convert('RGB')
+    except Exception as err:
+        print(err)
+    else:
+        image = np.asarray(image, dtype=np.float32) / 255.0
+        image = np.expand_dims(image, axis=0)
+        return image
