@@ -27,7 +27,7 @@ class ImageModel:
         predict: 予測結果
         """
         try:
-            predict = self.infer(tf.constant(image))['Prediction'][0]
+            predict = self.infer(image)['Prediction'][0]
             return predict.numpy().decode()
         except ValueError as e:
             print(e)

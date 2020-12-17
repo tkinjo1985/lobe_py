@@ -1,9 +1,9 @@
 import os
 from io import BytesIO
 
-import numpy as np
 import requests
 from PIL import Image
+import tensorflow as tf
 
 
 def preprocess_from_file(image_path):
@@ -19,7 +19,7 @@ def preprocess_from_file(image_path):
     if os.path.exists(image_path):
         file_extension = os.path.splitext(os.path.basename(image_path))[-1]
         if file_extension == '.jpg' or file_extension == '.jpeg' or file_extension == '.png':
-            image = _image2numpy(image_path)
+            image = _convert_image(image_path)
             return image
         else:
             print('画像ではありません。')
@@ -45,18 +45,31 @@ def preprocess_from_url(image_url):
         except Exception as err:
             print(err)
         else:
-            image = _image2numpy(image_bytes)
-            return image
+            try:
+                image = Image.open(image_bytes).convert('RGB')
+            except Exception as err:
+                print(err)
+            else:
+                image = image.resize(size=(224, 224))
+                image = _image2tensor(image)
+                return image
     else:
         print('画像が見つかりません。URLを確認してください。')
 
 
-def _image2numpy(image_file):
+def _convert_image(image_file):
     try:
-        image = Image.open(image_file).convert('RGB')
+        image = tf.keras.preprocessing.image.load_img(
+            image_file, color_mode='rgb', target_size=(224, 224))
     except Exception as err:
         print(err)
     else:
-        image = np.asarray(image, dtype=np.float32) / 255.0
-        image = np.expand_dims(image, axis=0)
+        image = _image2tensor(image)
         return image
+
+
+def _image2tensor(image):
+    image = tf.keras.preprocessing.image.img_to_array(image) / 255.0
+    image = tf.convert_to_tensor(image)
+    image = tf.expand_dims(image, axis=0)
+    return image
